@@ -1,5 +1,7 @@
 const restController = require('../controllers/restController.js')
+const adminController = require('../controllers/adminController.js')
 const userController = require('../controllers/userController')
+
 
 module.exports = (app, passport) => {
   const authenticated = (req, res, next) => {

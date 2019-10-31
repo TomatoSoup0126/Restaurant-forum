@@ -7,7 +7,7 @@ module.exports = (sequelize, DataTypes) => {
     opening_hours: DataTypes.STRING,
     description: DataTypes.TEXT
   }, {});
-  Restaurant.associate = function(models) {
+  Restaurant.associate = function (models) {
     // associations can be defined here
   };
   return Restaurant;

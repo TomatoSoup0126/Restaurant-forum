@@ -5,11 +5,13 @@ const db = require('../models')
 const User = db.User
 
 passport.use(new LocalStrategy(
+  //客製化選項
   {
     usernameField: 'email',
     passwordField: 'password',
     passReqToCallback: true
   },
+  //登入認證程序
   (req, username, password, cb) => {
     User.findOne({ where: { email: username } })
       .then(user => {

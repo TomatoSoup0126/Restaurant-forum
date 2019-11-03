@@ -9,9 +9,11 @@ const db = require('./models')
 const app = express()
 const port = 3000
 
+
 app.engine('handlebars', handlebars({ defaultLayout: 'main' }))
 app.set('view engine', 'handlebars')
 
+app.use('/upload', express.static(__dirname + '/upload'))
 app.use(methodOverride('_method'))
 
 app.use(bodyParser.urlencoded({ extended: true }))

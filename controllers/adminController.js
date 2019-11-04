@@ -118,12 +118,8 @@ const adminController = {
 
   deleteRestaurant: (req, res) => {
     return Restaurant.findByPk(req.params.id)
-      .then((restaurant) => {
-        restaurant.destroy()
-          .then((restaurant) => {
-            res.redirect('/admin/restaurants')
-          })
-      })
+      .then(restaurant => restaurant.destroy())
+      .then(() => res.redirect('/admin/restaurants'))
   },
 
   editUsers: (req, res) => {
@@ -142,14 +138,10 @@ const adminController = {
 
   putUsers: (req, res) => {
     return User.findByPk(req.params.id)
-      .then((user) => {
-        user.update({
-          isAdmin: (!user.isAdmin)
-        })
-          .then((user) => {
-            req.flash('success_messages', `${user.email} was succssfully to update`)
-            res.redirect('/admin/users')
-          })
+      .then(user => { user.update({ isAdmin: (!user.isAdmin) }) })
+      .then(() => {
+        req.flash('success_messages', 'user was succssfully to update')
+        res.redirect('/admin/users')
       })
   }
 }

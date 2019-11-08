@@ -50,11 +50,15 @@ let restController = {
         Category,
         { model: Comment, include: [User] }
       ]
-    }).then(restaurant => {
-      return res.render('restaurant', {
-        restaurant: restaurant
-      })
     })
+      .then(restaurant => {
+        restaurant.viewCounts += 1
+        restaurant.save().then(restaurant => {
+          return res.render('restaurant', {
+            restaurant: restaurant
+          })
+        })
+      })
   },
 
   getFeed: (req, res) => {

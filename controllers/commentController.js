@@ -15,9 +15,10 @@ let commentController = {
   deleteComment: (req, res) => {
     return Comment.findByPk(req.params.id)
       .then((comment) => {
+        let restaurantId = comment.RestaurantId
         comment.destroy()
           .then((comment) => {
-            res.redirect(`/restaurants/${comment.RestaurantId}`)
+            res.redirect(`/restaurants/${restaurantId}`)
           })
       })
   }

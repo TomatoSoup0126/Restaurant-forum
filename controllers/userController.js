@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt-nodejs')
 const db = require('../models')
 const User = db.User
+const Favorite = db.Favorite
 const Comment = db.Comment
 const Restaurant = db.Restaurant
 
@@ -113,6 +114,31 @@ const userController = {
               res.redirect(`/users/${req.params.id}`)
             })
         })
+  },
+
+  addFavorite: (req, res) => {
+    return Favorite.create({
+      UserId: req.user.id,
+      RestaurantId: req.params.restaurantId
+    })
+      .then((restaurant) => {
+        return res.redirect('back')
+      })
+  },
+
+  removeFavorite: (req, res) => {
+    return Favorite.findOne({
+      where: {
+        UserId: req.user.id,
+        RestaurantId: req.params.restaurantId
+      }
+    })
+      .then((favorite) => {
+        favorite.destroy()
+          .then((restaurant) => {
+            return res.redirect('back')
+          })
+      })
   }
 }
 

@@ -13,6 +13,12 @@ let categoryController = {
     categoryService.postCategories(req, res, (data) => {
       return res.json(data)
     })
+  },
+
+  putCategories: (req, res) => {
+    categoryService.putCategories(req, res, (data) => {
+      return res.json(data)
+    })
   }
 }
 

@@ -24,6 +24,7 @@ app.use('/upload', express.static(__dirname + '/upload'))
 app.use(methodOverride('_method'))
 
 app.use(bodyParser.urlencoded({ extended: true }))
+app.use(bodyParser.json())
 
 app.use(session({ secret: 'secret', resave: false, saveUninitialized: false }))
 

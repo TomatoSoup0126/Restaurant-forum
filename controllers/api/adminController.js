@@ -4,8 +4,6 @@ const adminService = require('../../services/adminService.js')
 const Restaurant = db.Restaurant
 const Category = db.Category
 
-const imgur = require('imgur-node-api')
-const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
 
 const adminController = {
   getRestaurants: (req, res) => {

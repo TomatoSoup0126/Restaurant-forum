@@ -1,4 +1,4 @@
-const fs = require('fs')
+const adminService = require('../services/adminService')
 
 const db = require('../models')
 const Restaurant = db.Restaurant
@@ -10,8 +10,8 @@ const IMGUR_CLIENT_ID = '139178d64d36915'
 
 const adminController = {
   getRestaurants: (req, res) => {
-    return Restaurant.findAll({ include: [Category] }).then(restaurants => {
-      return res.render('admin/restaurants', { restaurants })
+    adminService.getRestaurants(req, res, (data) => {
+      return res.render('admin/restaurants', data)
     })
   },
 

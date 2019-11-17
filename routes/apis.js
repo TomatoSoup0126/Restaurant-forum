@@ -19,6 +19,7 @@ const authenticatedAdmin = (req, res, next) => {
 const adminController = require('../controllers/api/adminController.js')
 const categoryController = require('../controllers/api/categoryController.js')
 const userController = require('../controllers/api/userController.js')
+const restController = require('../controllers/api/restController')
 
 
 // JWT signin
@@ -40,5 +41,12 @@ router.get('/admin/categories', authenticated, authenticatedAdmin, categoryContr
 router.post('/admin/categories', authenticated, authenticatedAdmin, categoryController.postCategories)
 router.put('/admin/categories/:id', authenticated, authenticatedAdmin, categoryController.putCategories)
 router.delete('/admin/categories/:id', authenticated, authenticatedAdmin, categoryController.deleteCategory)
+
+router.get('/', authenticated, authenticatedAdmin, (req, res) => res.redirect('/api/restaurants'))
+router.get('/restaurants', authenticated, authenticatedAdmin, restController.getRestaurants)
+router.get('/restaurants/top', authenticated, authenticatedAdmin, restController.getTopRestaurant)
+router.get('/restaurants/feeds', authenticated, authenticatedAdmin, restController.getFeed)
+router.get('/restaurants/:id', authenticated, authenticatedAdmin, restController.getRestaurant)
+router.get('/restaurants/:id/dashboard', authenticated, authenticatedAdmin, restController.getDashboard)
 
 module.exports = router

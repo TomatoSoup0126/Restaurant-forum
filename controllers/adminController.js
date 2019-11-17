@@ -5,8 +5,6 @@ const Restaurant = db.Restaurant
 const User = db.User
 const Category = db.Category
 
-const imgur = require('imgur-node-api')
-const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
 
 const adminController = {
   getRestaurants: (req, res) => {
@@ -71,26 +69,16 @@ const adminController = {
   },
 
   editUsers: (req, res) => {
-    return User.findAll()
-      .then(users => {
-        users.forEach(user => {
-          if (!user.isAdmin) {
-            user.role = 'user'
-          } else {
-            user.role = 'admin'
-          }
-        })
-        return res.render('admin/users', { users })
-      })
+    adminService.editUsers(req, res, (data) => {
+      return res.render('admin/users', data)
+    })
   },
 
   putUsers: (req, res) => {
-    return User.findByPk(req.params.id)
-      .then(user => { user.update({ isAdmin: (!user.isAdmin) }) })
-      .then(() => {
-        req.flash('success_messages', 'user was succssfully to update')
-        res.redirect('/admin/users')
-      })
+    adminService.putUsers(req, res, (data) => {
+      req.flash('success_messages', data['message'])
+      res.redirect('/admin/users')
+    })
   }
 }
 

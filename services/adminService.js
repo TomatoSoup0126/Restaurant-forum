@@ -112,6 +112,28 @@ const adminService = {
             })
         })
   },
+
+  editUsers: (req, res, callback) => {
+    return User.findAll()
+      .then(users => {
+        users.forEach(user => {
+          if (!user.isAdmin) {
+            user.role = 'user'
+          } else {
+            user.role = 'admin'
+          }
+        })
+        callback({ users })
+      })
+  },
+
+  putUsers: (req, res, callback) => {
+    return User.findByPk(req.params.id)
+      .then(user => { user.update({ isAdmin: (!user.isAdmin) }) })
+      .then(() => {
+        callback({ status: 'success', message: 'user was succssfully to update' })
+      })
+  }
 }
 
 module.exports = adminService

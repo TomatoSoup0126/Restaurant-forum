@@ -22,6 +22,7 @@ const userController = require('../controllers/api/userController.js')
 
 
 // JWT signin
+router.post('/signup', userController.signUp)
 router.post('/signin', userController.signIn)
 
 router.get('/admin/restaurants', authenticated, authenticatedAdmin, adminController.getRestaurants)

@@ -1,5 +1,5 @@
-const express = require('express');
-const router = express.Router();
+const express = require('express')
+const router = express.Router()
 
 const passport = require('../config/passport')
 
@@ -11,6 +11,7 @@ const commentController = require('../controllers/commentController.js')
 
 const multer = require('multer')
 const upload = multer({ dest: 'temp/' })
+
 
 
 const authenticated = (req, res, next) => {
@@ -75,6 +76,5 @@ router.put('/users/:id', authenticated, upload.single('image'), userController.p
 
 router.post('/following/:userId', authenticated, userController.addFollowing)
 router.delete('/following/:userId', authenticated, userController.removeFollowing)
-
 
 module.exports = router

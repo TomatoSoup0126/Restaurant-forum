@@ -56,14 +56,19 @@ const userController = {
   getUser: (req, res) => {
     return User.findByPk(req.params.id, {
       include: [
-        {
-          model: Comment, include: [
-            { model: Restaurant }
-          ]
-        }
+        { model: Comment, include: [{ model: Restaurant }] },
+        { model: Restaurant, as: 'FavoritedRestaurants' },
+        { model: User, as: 'Followings' },
+        { model: User, as: 'Followers' }
       ]
     }).then(userResult => {
-      return res.render('user', { userResult })
+      let comments = userResult.Comments
+      let uniqueComments = Array.from(new Set(comments.map(comment => comment.RestaurantId))) //Array複寫comments, Set()將map成comment.RestaurantId的陣列重複值忽略
+        .map(RestaurantId => {
+          return comments.find(comment => comment.RestaurantId === RestaurantId) //用篩過的餐廳id去篩留言id
+        })
+
+      return res.render('user', { userResult, uniqueComments })
     })
   },
 

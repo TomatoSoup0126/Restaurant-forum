@@ -10,6 +10,8 @@ const Followship = db.Followship
 const imgur = require('imgur-node-api')
 const IMGUR_CLIENT_ID = '139178d64d36915'
 
+const userService = require('../services/userService')
+
 const userController = {
   signUpPage: (req, res) => {
     return res.render('signup')
@@ -54,21 +56,8 @@ const userController = {
   },
 
   getUser: (req, res) => {
-    return User.findByPk(req.params.id, {
-      include: [
-        { model: Comment, include: [{ model: Restaurant }] },
-        { model: Restaurant, as: 'FavoritedRestaurants' },
-        { model: User, as: 'Followings' },
-        { model: User, as: 'Followers' }
-      ]
-    }).then(userResult => {
-      let comments = userResult.Comments
-      let uniqueComments = Array.from(new Set(comments.map(comment => comment.RestaurantId))) //Array複寫comments, Set()將map成comment.RestaurantId的陣列重複值忽略
-        .map(RestaurantId => {
-          return comments.find(comment => comment.RestaurantId === RestaurantId) //用篩過的餐廳id去篩留言id
-        })
-
-      return res.render('user', { userResult, uniqueComments })
+    userService.getUser(req, res, (data) => {
+      return res.render('user', data)
     })
   },
 
@@ -86,137 +75,56 @@ const userController = {
   },
 
   putUser: (req, res) => {
-    console.warn(req)
-    if (!req.body.name) {
-      req.flash('error_messages', "記得填名字!")
-      return res.redirect('back')
-    }
-
-    const { file } = req
-    if (file) {
-      imgur.setClientID(IMGUR_CLIENT_ID);
-      imgur.upload(file.path, (err, img) => {
-        return User.findByPk(req.params.id)
-          .then((user) => {
-            user.update({
-              name: req.body.name,
-              image: file ? img.data.link : restaurant.image,
-            })
-              .then((user) => {
-                req.flash('success_messages', '個人資訊更新囉')
-                res.redirect(`/users/${req.params.id}`)
-              })
-          })
-      })
-    }
-    else
-      return User.findByPk(req.params.id)
-        .then((user) => {
-          user.update({
-            name: req.body.name,
-            image: user.image,
-          })
-            .then((user) => {
-              req.flash('success_messages', '個人資訊更新囉')
-              res.redirect(`/users/${req.params.id}`)
-            })
-        })
+    userService.putUser(req, res, (data) => {
+      if (data['status'] === 'error') {
+        req.flash('error_messages', data['message'])
+        return res.redirect('back')
+      }
+      req.flash('success_messages', data['message'])
+      res.redirect(`/users/${req.params.id}`)
+    })
   },
 
   addFavorite: (req, res) => {
-    return Favorite.create({
-      UserId: req.user.id,
-      RestaurantId: req.params.restaurantId
+    userService.addFavorite(req, res, (data) => {
+      return res.redirect('back')
     })
-      .then((restaurant) => {
-        return res.redirect('back')
-      })
   },
 
   removeFavorite: (req, res) => {
-    return Favorite.findOne({
-      where: {
-        UserId: req.user.id,
-        RestaurantId: req.params.restaurantId
-      }
+    userService.removeFavorite(req, res, (data) => {
+      return res.redirect('back')
     })
-      .then((favorite) => {
-        favorite.destroy()
-          .then((restaurant) => {
-            return res.redirect('back')
-          })
-      })
   },
 
   like: (req, res) => {
-    return Like.create({
-      UserId: req.user.id,
-      RestaurantId: req.params.restaurantId
+    userService.like(req, res, (data) => {
+      return res.redirect('back')
     })
-      .then((restaurant) => {
-        return res.redirect('back')
-      })
   },
 
   unlike: (req, res) => {
-    return Like.findOne({
-      where: {
-        UserId: req.user.id,
-        RestaurantId: req.params.restaurantId
-      }
+    userService.unlike(req, res, (data) => {
+      return res.redirect('back')
     })
-      .then((like) => {
-        like.destroy()
-          .then((restaurant) => {
-            return res.redirect('back')
-          })
-      })
   },
 
   getTopUser: (req, res) => {
-    // 撈出所有 User 與 followers 資料
-    return User.findAll({
-      include: [
-        { model: User, as: 'Followers' }
-      ]
-    }).then(users => {
-      // 整理 users 資料
-      users = users.map(user => ({
-        ...user.dataValues,
-        // 計算追蹤者人數
-        FollowerCount: user.Followers.length,
-        // 判斷目前登入使用者是否已追蹤該 User 物件
-        isFollowed: req.user.Followings.map(d => d.id).includes(user.id)
-      }))
-      // 依追蹤者人數排序清單
-      users = users.sort((a, b) => b.FollowerCount - a.FollowerCount)
-      return res.render('topUser', { users: users })
+    userService.getTopUser(req, res, (data) => {
+      return res.render('topUser', data)
     })
   },
 
   addFollowing: (req, res) => {
-    return Followship.create({
-      followerId: req.user.id,
-      followingId: req.params.userId
+    userService.addFollowing(req, res, (data) => {
+      return res.redirect('back')
     })
-      .then((followship) => {
-        return res.redirect('back')
-      })
   },
 
   removeFollowing: (req, res) => {
-    return Followship.findOne({
-      where: {
-        followerId: req.user.id,
-        followingId: req.params.userId
-      }
+    userService.removeFollowing(req, res, (data) => {
+      return res.redirect('back')
     })
-      .then((followship) => {
-        followship.destroy()
-          .then((followship) => {
-            return res.redirect('back')
-          })
-      })
   }
 }
 

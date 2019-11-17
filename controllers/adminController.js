@@ -6,7 +6,6 @@ const User = db.User
 const Category = db.Category
 
 
-const adminService = require('../services/adminService.js')
 const adminController = {
   getRestaurants: (req, res) => {
     adminService.getRestaurants(req, res, (data) => {
